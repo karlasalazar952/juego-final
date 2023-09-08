@@ -20,8 +20,6 @@ BRICK_COLS = 9
 BALL_SPEED_X = 5
 BALL_SPEED_Y = 5
 
-
-
 # establecer canvas de juego
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
