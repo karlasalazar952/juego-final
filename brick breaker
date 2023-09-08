@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 
-
 # Colors
 BG_COLOR = (0, 0, 0)
 BLUE = (50, 100, 200)
@@ -21,6 +20,8 @@ BRICK_COLS = 9
 BALL_SPEED_X = 5
 BALL_SPEED_Y = 5
 
+
+
 # establecer canvas de juego
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -36,9 +37,9 @@ ball_x, ball_y = WIDTH // 2, HEIGHT // 2
 ball_dx = BALL_SPEED_X
 ball_dy = -BALL_SPEED_Y
 
-'''# Musica de fondo
+# Musica de fondo
 pygame.mixer.music.load('sonido/JLJcHbYSlB8_128.mp3')
-pygame.mixer.music.play(-1)'''
+pygame.mixer.music.play(-1)
 
 # crear ladrillos
 bricks = []
@@ -68,6 +69,11 @@ questions = [
     {"question": "¿Cuánto es 10 / 2?", "answer": 5},
     {"question": "¿Cuánto es 3 ** 2?", "answer": 9},
     {"question": "¿Cuánto es 8 - 3?", "answer": 5},
+    {"question": "¿Cuánto es 5 + 7?", "answer": 12},
+    {"question": "¿Cuánto es 5 * 8?", "answer": 40},
+    {"question": "¿Cuánto es 120 / 3?", "answer": 40},
+    {"question": "¿Cuánto es 3 * 2?", "answer": 6},
+    {"question": "¿Cuánto es 27 - 14?", "answer": 13}
 ]
 
 # Función para mostrar una pregunta y obtener una respuesta
@@ -90,16 +96,9 @@ def show_question():
     else:
         print(f"Respuesta incorrecta. La respuesta correcta era {correct_answer}. Reiniciando el juego...")
 
-
-    # Restablecer la lista de ladrillos
-    bricks = []
-    for row in range(BRICK_ROWS):
-        for col in range(BRICK_COLS):
-            brick_x = col * (BRICK_WIDTH + 5) + 9.9
-            brick_y = row * (BRICK_HEIGHT + 5) + 50
-            bricks.append(pygame.Rect(brick_x, brick_y, BRICK_WIDTH, BRICK_HEIGHT))
-
 # Main del juego
+lives = 3
+score = 0
 start = False
 running = True
 while running:
@@ -107,6 +106,11 @@ while running:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    screen.fill(BG_COLOR)
+    draw_paddle(paddle_x, paddle_y)
+    draw_ball(ball_x, ball_y)
+    draw_bricks()
 
     # Controles del juego
     keys = pygame.key.get_pressed()
@@ -116,6 +120,20 @@ while running:
         paddle_x -= 7
     if keys[pygame.K_RIGHT] and paddle_x < WIDTH - PADDLE_WIDTH:
         paddle_x += 7
+
+    if lives == 0:
+        lives = 3
+        score = 0
+
+    # Score del juego
+    font = pygame.font.Font(None, 40)
+    text = font.render(f'Score: {score}', 1, GREEN)
+    screen.blit(text, (20, HEIGHT-590))
+
+    # Lives del juego
+    font = pygame.font.Font(None, 40)
+    text = font.render(f'Lives: {lives}', 1, GREEN)
+    screen.blit(text, (WIDTH-120, HEIGHT-590))
 
     # Mover bola al iniciar
     if (start == True):
@@ -135,20 +153,32 @@ while running:
     ):
         ball_dy *= -1
 
+    # Bola choca con nada
+    if ball_y >= HEIGHT:
+        ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+        ball_dx = BALL_SPEED_X
+        ball_dy = -BALL_SPEED_Y
+        lives -= 1
+        start = False
+        if lives == 0:
+            font = pygame.font.Font(None, 40)
+            text = font.render(f'GAME OVER', 1, GREEN)
+            screen.blit(text, (WIDTH-500, HEIGHT-300))
+
+        bricks = []
+        for row in range(BRICK_ROWS):
+            for col in range(BRICK_COLS):
+                brick_x = col * (BRICK_WIDTH + 5) + 9.9
+                brick_y = row * (BRICK_HEIGHT + 5) + 50
+                bricks.append(pygame.Rect(brick_x, brick_y, BRICK_WIDTH, BRICK_HEIGHT))
+        show_question()  # Mostrar pregunta y obtener respuesta
+
     # bola choca con los ladrillos
     for brick in bricks:
         if brick.colliderect(pygame.Rect(ball_x - BALL_SIZE, ball_y - BALL_SIZE, BALL_SIZE * 2, BALL_SIZE * 2)):
             ball_dy *= -1
             bricks.remove(brick)
-
-    screen.fill(BG_COLOR)
-    draw_paddle(paddle_x, paddle_y)
-    draw_ball(ball_x, ball_y)
-    draw_bricks()
+            score += 1
 
     pygame.display.update()
     clock.tick(60)
-
-    # Bola choca con nada
-    if ball_y >= HEIGHT:
-        show_question()  # Mostrar pregunta y obtener respuesta
