@@ -14,3 +14,7 @@ PASOS E INSTRUCCIONES PARA JUGARLO:
    
 ![Captura de pantalla (76)](https://github.com/karlasalazar952/juego-final/assets/143463871/5dc21928-3066-43e1-b32c-991c9f9e59c6)
 
+Equipo:
+- Karla Itzel Salazar Servantes - A00840128
+- José Alberto Pérez Morales - A00840229
+- Javier Ernesto Rivera Campos - A00839004
